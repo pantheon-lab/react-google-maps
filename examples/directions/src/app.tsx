@@ -15,7 +15,7 @@ const App = () => (
   <APIProvider apiKey={API_KEY}>
     <Map
       defaultCenter={{lat: 43.65, lng: -79.38}}
-      defaultZoom={9}
+      defaultZoom={13}
       gestureHandling={'greedy'}
       fullscreenControl={false}>
       <Directions />
@@ -48,13 +48,17 @@ function Directions() {
 
     directionsService
       .route({
-        origin: '100 Front St, Toronto ON',
-        destination: '500 College St, Toronto ON',
-        travelMode: google.maps.TravelMode.DRIVING,
-        provideRouteAlternatives: true
+        origin: {placeId: 'ChIJYSbICsQW2jERUKXarqz3AAU'},
+        destination: {placeId: 'ChIJ29omWQgZ2jEROEz2yZFzQp8'},
+        travelMode: google.maps.TravelMode.TRANSIT,
+        provideRouteAlternatives: true,
+        transitOptions: {
+          modes: [google.maps.TransitMode.BUS]
+        }
       })
       .then(response => {
         directionsRenderer.setDirections(response);
+        console.log(response);
         setRoutes(response.routes);
       });
 
@@ -83,7 +87,7 @@ function Directions() {
         {routes.map((route, index) => (
           <li key={route.summary}>
             <button onClick={() => setRouteIndex(index)}>
-              {route.summary}
+              {route.legs?.[0].distance?.text + route.legs?.[0].duration?.text}
             </button>
           </li>
         ))}
